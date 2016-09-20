@@ -40,6 +40,8 @@ class UserActor(service: ActorRef) extends Actor with ActorLogging {
     case Failure(ex: Exception) =>
       log.info("Something must be wrong with the server, let me try again in a few seconds")
       sendRequest(5 seconds)
+
+    case other => log.info(s"Got another message: $other")
   }
 
   private def sendRequest(delay: FiniteDuration = 1 second) = {
