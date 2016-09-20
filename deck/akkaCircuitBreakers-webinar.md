@@ -34,6 +34,34 @@ build-lists: true
 
 ---
 
+# Timeouts are hard
+
+![inline](images/example-1.png)
+
+---
+
+# Timeouts are hard
+
+![inline](images/example-2.png)
+
+---
+
+# The use case of Circuit breakers
+
+- **This one call** is timing out
+- Is this a one-time failure?
+- Or a consistent issue?
+- How do we keep track?
+- Can we give the service a chance to recover before trying again?
+
+---
+
+# Our goal
+
+![inline](images/example-3.png)
+
+---
+
 # A code example
 
 For readability, code slides won't have an image background
