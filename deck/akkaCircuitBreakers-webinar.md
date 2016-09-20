@@ -62,6 +62,30 @@ build-lists: true
 
 ---
 
+# Circuit Breaker basics [^1]
+
+
+![inline](images/circuit-breaker-states-2.png) 
+
+[^1]: Image taken from [the Akka docs](http://doc.akka.io/docs/akka/2.4/common/circuitbreaker.html)
+
+^ Closed is good, calls move forward as always
+
+^ Open is bad, something's wrong, calls fail fast
+
+^ Half Open is a trial after an Open state
+
+---
+
+![inline 75%](images/circuit-breaker-states-2.png) 
+
+- Closed = life is good
+- Too many exceptions or timeouts => Open
+- After a cooldown period => Half Open
+- On Half Open, one failure or timeout => Open
+
+---
+
 # A code example
 
 For readability, code slides won't have an image background
