@@ -19,6 +19,9 @@ class UserActor(service: ActorRef) extends Actor with ActorLogging {
 
   import context.dispatcher
 
+  // Max time the user will stick around waiting for a response
+  private implicit val timeout = Timeout(3 seconds)
+
   // Send our first request
   sendRequest
 
@@ -30,13 +33,9 @@ class UserActor(service: ActorRef) extends Actor with ActorLogging {
     case Failure(ex: AskTimeoutException) =>
       log.error("Got bored of waiting, I'm outta here!")
       context.stop(self)
-
   }
 
   private def sendRequest = {
-
-    implicit val timeout = Timeout(5 seconds)
-
     // Send a message, pipe response to ourselves
     context.system.scheduler.scheduleOnce(1 second) {
       val response = service ? ServiceActor.Request
