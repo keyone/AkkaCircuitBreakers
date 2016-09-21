@@ -52,7 +52,7 @@ build-lists: true
 - Is this a one-time failure?
 - Or a consistent issue?
 - How do we keep track?
-- Can we give the service a chance to recover before trying again?
+- Can we respond to our users quickly?
 
 ---
 
@@ -69,7 +69,7 @@ build-lists: true
 
 [^1]: Image taken from [the Akka docs](http://doc.akka.io/docs/akka/2.4/common/circuitbreaker.html)
 
-^ Closed is good, calls move forward as always
+^ Closed = life is good, calls move forward as always
 
 ^ Open is bad, something's wrong, calls fail fast
 
@@ -77,28 +77,66 @@ build-lists: true
 
 ---
 
-![inline 75%](images/circuit-breaker-states-2.png) 
+![fit left](images/circuit-breaker-states-2.png) 
 
-- Closed = life is good
-- Too many exceptions or timeouts => Open
-- After a cooldown period => Half Open
-- On Half Open, one failure or timeout => Open
+- Closed:
+  - Timeouts or failures increment a failure counter
+  - Success resets counter
+  - Max failures => Open state
+- Open:
+  - Calls fail-fast
+  - After a reset timeout => Half-Open
+- Half-Open:
+  - First call allowed through
+    - If succeeds => Closed
+    - If fails => Open
+  - All other calls fail fast
 
 ---
 
-# A code example
+# Transition listeners
 
-For readability, code slides won't have an image background
+- `onOpen`
+- `onClose`
+- `onHalfOpen`
+
+---
+
+# Example
 
 ```scala
-class ServiceActor() extends Actor with ActorLogging {
+class MyActor extends Actor with ActorLogging {
+  import context.dispatcher
+ 
+  val breaker =
+    new CircuitBreaker(
+      context.system.scheduler,
+      maxFailures = 5,
+      callTimeout = 10 seconds,
+      resetTimeout = 1 minute).
+        onOpen(notifyMe("Open"))
+ 
+  def notifyMe(state: String): Unit =
+    log.warning(s"My CircuitBreaker is now $state")
+```
 
-  override def receive: Receive = {
-    case message =>
-      log.info("Received this message: '{}', responding", message)
-      sender() ! "response"
+---
+
+# Using the Circuit Breaker
+
+```scala
+class MyActor extends Actor with ActorLogging {
+
+  private def wsCall: String = ...
+  
+  private def asynchWSCall: Future[String] = ...
+ 
+  def receive = {
+    case Request =>
+      breaker.withCircuitBreaker(asynchWSCall) pipeTo sender()
+    case BlockingRequest =>
+      sender() ! breaker.withSyncCircuitBreaker(wsCall)
   }
-
 }
 ```
 
@@ -106,9 +144,26 @@ class ServiceActor() extends Actor with ActorLogging {
 
 ![](images/working.jpg)
 
+# [fit] A *working*
+# [fit] **example**
+
+---
+
+![](images/working.jpg)
+
+# Github
+
+<br>
+
+github.com/alejandrolujan/AkkaCircuitBreakers
+
+---
+
+![](images/working.jpg)
+
 # [fit] Thanks!
 
-## Upcoming webinars:
+### Upcoming webinars:
 
 - **October 21**: Akka Typed - Type Sanity for Your Actors
 
