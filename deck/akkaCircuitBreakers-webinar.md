@@ -209,6 +209,12 @@ doc.akka.io/docs/akka/2.4/common/circuitbreaker.html
 
 ![](images/working.jpg)
 
+# [fit] Questions?
+
+---
+
+![](images/working.jpg)
+
 # [fit] Thanks!
 
 ### Upcoming webinars:

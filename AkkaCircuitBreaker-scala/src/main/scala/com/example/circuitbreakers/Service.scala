@@ -14,11 +14,11 @@ trait Service {
 
   // Max count and delays
   private val normalDelay = 100
-  private val restartDelay = 4000  // Exercise: Test with < 3000 and > 3000
+  private val restartDelay = 3200  // Exercise: Test with < 3000 and > 3000
 
   protected def callWebService(): Response.type = {
 
-    if(Random.nextDouble() <= 0.95 ) {
+    if(Random.nextDouble() <= 0.9 ) {
       Thread.sleep(normalDelay)
     } else {
       // Service shuts down, takes a while to come back up
