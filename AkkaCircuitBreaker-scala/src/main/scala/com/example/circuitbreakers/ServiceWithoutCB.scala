@@ -12,8 +12,7 @@ class ServiceWithoutCB extends Actor with ActorLogging with Service {
 
   override def receive: Receive = {
     case Request =>
-      callWebService()
-      sender() ! Response
+      sender() ! callWebService()
   }
 
 }

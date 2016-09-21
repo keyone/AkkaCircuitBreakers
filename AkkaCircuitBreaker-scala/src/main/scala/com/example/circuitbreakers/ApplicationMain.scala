@@ -10,8 +10,8 @@ object ApplicationMain extends App {
 
   // Create the system and service
   val system = ActorSystem("MySystem")
-  val service = system.actorOf(ServiceWithoutCB.props, "Service")
-//  val service = system.actorOf(ServiceWithCB.props, "Service")
+//  val service = system.actorOf(ServiceWithoutCB.props, "Service")
+  val service = system.actorOf(ServiceWithCB.props, "Service")
 
   // Create the user actors
   val userCount = 10
