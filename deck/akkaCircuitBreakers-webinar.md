@@ -149,13 +149,61 @@ class MyActor extends Actor with ActorLogging {
 
 ---
 
+# Low-level usage
+#### *(AKA power-user API)*
+
+![inline](images/example-poweruser.png)
+
+^ If the response is coming as a message to the CB owner, it's better to use the low-level API
+
+---
+
+# Low-level usage
+
+```scala
+class ProfileServiceActor extends Actor with ActorLogging {
+ 
+  def receive = {
+  
+    // These are normal requests coming from Users
+    case Request if breaker.isClosed => wsProxyActor ! Request
+    case Request => sender() ! FastFailMessage
+    
+    // These are the responses coming from our WSProxyActor
+    case Response => breaker.succeed()
+    
+    // Our WS Proxy sent back a failure message, so we increase the fail counter
+    case WSFailure(reason) => breaker.fail()
+
+	// Response from the WS Proxy took too long, so we increase the fail counter
+    case ReceiveTimeout => breaker.fail()
+  }
+}
+```
+
+---
+
+# Low-level usage
+
+- Not all methods make sense in all states
+  - Ex: `succeed()` should not be used while `Open`
+- You don't get automatic 1-request on `HalfOpen`
+- So, use with care
+- Favor the higher level API
+
+---
+
 ![](images/working.jpg)
 
-# Github
+# That's all folks!
 
 <br>
 
 github.com/alejandrolujan/AkkaCircuitBreakers
+
+<br>
+
+doc.akka.io/docs/akka/2.4/common/circuitbreaker.html
 
 ---
 

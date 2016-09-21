@@ -2,9 +2,9 @@ name := """AkkaCircuitBreaker-scala"""
 
 version := "1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-val akkaVer = "2.4.0"
+val akkaVer = "2.4.10"
 val logbackVer = "1.1.3"
 
 
